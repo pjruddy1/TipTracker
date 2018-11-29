@@ -10,6 +10,8 @@ namespace TipTracker
     {
         static void Main(string[] args)
         {
+
+
         }
     }
 }
