@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.SqlClient;
 
 namespace TipTracker
 {
@@ -13,6 +14,22 @@ namespace TipTracker
             DisplayOpeningScreen();
             DisplayMenu();
             DisplayClosingScreen();
+        }
+
+        static void DisplaySendDataToSQL(List<Wages> dailyWages)
+        {
+            DisplayHeader("Add Income To File");
+
+            Console.WriteLine("Press any Key to Add Income");
+            //@"Data Source = (DESKTOP-ULLV9GE)\(SQLEXPRESS);Initial Catalog=(TipTracker);Intergrated Security=true;
+            SqlConnection sqlCon = new SqlConnection(@"Data Source = (DESKTOP-ULLV9GE)\(SQLEXPRESS);Initial Catalog=(TipTracker);");
+            foreach (Wages wage in dailyWages)
+            {
+                
+                SqlDataAdapter sqlData = new SqlDataAdapter($"INSERT INTO [DailyIncome](DateOfIncome, HourlyWage, HoursWorked, HourlIncome, TipAmount)VALUES({wage.DateOfIncome}," +
+                    $"{wage.HourlyWage},{wage.HoursWorked},{wage.HourlyIncome},{wage.TipAmount}", sqlCon);
+            }
+            DisplayContinuePrompt();
         }
 
         static void DisplayDailyIncomeInfo(List<Wages> dailyWages)
@@ -45,6 +62,7 @@ namespace TipTracker
             // get Date from list
             //
             Console.Clear();
+            double totalIncome = 0;
             bool dateFound = false;
             DisplayHeader($"Tips & Daily Wages Earned for {dateToView}");
             Console.WriteLine("Type of Income".PadRight(25) + "Amount".PadLeft(10));
@@ -58,11 +76,10 @@ namespace TipTracker
                     Console.WriteLine("------------".PadLeft(35));
                     Console.WriteLine("Hourly Wage Earned".PadRight(25) + wage.HourlyIncome.ToString("C2").PadLeft(10));
                     Console.WriteLine("Tips Earned:".PadRight(25) + wage.TipAmount.ToString("C2").PadLeft(10));
-                    double totalIncome = wage.TipAmount + wage.HourlyIncome;
+                    totalIncome = wage.HourlyIncome + wage.TipAmount;
                     Console.WriteLine("------------".PadLeft(35));
                     Console.WriteLine("Total Wages:".PadRight(25) + totalIncome.ToString("C2").PadLeft(10));
-                    Console.WriteLine();
-                    Console.WriteLine("Press any Key to Change Values");
+                   
                     dateFound = true;
                     break;
                 }
@@ -110,6 +127,7 @@ namespace TipTracker
             //
             Console.Clear();
             bool dateFound = false;
+            double totalIncome = 0;
             DisplayHeader($"Tips & Daily Wages Earned for {dateToChange}");
             Console.WriteLine("Type of Income".PadRight(25) + "Amount".PadLeft(10));
             Console.WriteLine("-----------------".PadRight(25) + "--------".PadLeft(10));
@@ -122,7 +140,7 @@ namespace TipTracker
                     Console.WriteLine("------------".PadLeft(35));
                     Console.WriteLine("Hourly Wage Earned".PadRight(25) + wage.HourlyIncome.ToString("C2").PadLeft(10));
                     Console.WriteLine("Tips Earned:".PadRight(25) + wage.TipAmount.ToString("C2").PadLeft(10));
-                    double totalIncome = wage.TipAmount + wage.HourlyIncome;
+                    totalIncome = wage.TipAmount + wage.HourlyIncome;
                     Console.WriteLine("------------".PadLeft(35));
                     Console.WriteLine("Total Wages:".PadRight(25) + totalIncome.ToString("C2").PadLeft(10));
                     Console.WriteLine();
@@ -172,7 +190,7 @@ namespace TipTracker
                     }
                     wage.HourlyWage = wagePerHour;
 
-                    wage.DisplayHourlyIncome();
+                    wage.HourlyIncome = wagePerHour * hoursWorked;
 
                     dateFound = true;
                     break;
@@ -243,7 +261,7 @@ namespace TipTracker
             }
             newWage.HourlyWage = wagePerHour;
 
-            newWage.DisplayHourlyIncome();
+            newWage.HourlyIncome = wagePerHour * hoursWorked;
 
             //
             //Add Wage to list
@@ -275,17 +293,17 @@ namespace TipTracker
 
                 switch (menuChoice)
                 {
-                    case "A":
-                    case "a":
-                        break;
+                    case "1":
                         DisplayGetTotalDailyIncome(dailyWages);
-                    case "B":
                         break;
+                    case "2":
                         DisplayUpdateTotalDailyIncome(dailyWages);
-                    case "C":
                         break;
+                    case "3":
                         DisplayDailyIncomeInfo(dailyWages);
-                    case "D":
+                        break;
+                    case "4":
+                        DisplaySendDataToSQL(dailyWages);
                         break;
 
                     case "5":
