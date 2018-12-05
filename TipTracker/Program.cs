@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using System.Data;
+
 
 namespace TipTracker
 {
@@ -16,19 +18,123 @@ namespace TipTracker
             DisplayClosingScreen();
         }
 
+        static List<Wages> DisplayReadDataFromSQL()
+        {
+            List<Wages> dailyWages = new List<Wages>();
+            DataSet dailyIncome_ds = new DataSet();
+            DataTable dailyIncome_dt = new DataTable();
+
+            // load in DataSet and DataTable
+            dailyIncome_ds = GetDataSet();
+
+            // add all matching ski runs to an array of DataRow
+            DataRow[] dailyIncomeRows = dailyIncome_ds.Tables["dailyIncome"].Select();
+
+
+
+            // add all DataRow info to the list of ski runs
+
+            foreach (DataRow Income in dailyIncomeRows)
+
+            {
+
+                dailyWages.Add(new Wages
+
+                {
+
+                    DateOfIncome = DateTime.Parse(Income["DateOfIncome"].ToString()),
+                    HourlyWage = double.Parse(Income["HourlyWage"].ToString()),
+                    HoursWorked = double.Parse(Income["HoursWorked"].ToString()),
+                    HourlyIncome = double.Parse(Income["HourlyIncome"].ToString()),
+                    TipAmount = double.Parse(Income["TipAmount"].ToString())
+
+                });
+            }
+            DisplayContinuePrompt();
+            return dailyWages;
+            
+            
+        }
+
+        static DataSet GetDataSet()
+        {
+            DataSet dailyIncome_ds = new DataSet();
+             DisplayHeader("Read Income From File");
+            
+            
+            SqlConnection sqlConn = new SqlConnection(@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True");
+            string sqlCommandString = $"SELECT * FROM DailyIncome";
+
+            SqlCommand sqlCommand = new SqlCommand(sqlCommandString, sqlConn);
+            SqlDataAdapter sqlAdapter = new SqlDataAdapter(sqlCommand);
+
+            sqlAdapter.Fill(dailyIncome_ds, "DailyIncome");
+
+            //var tables = dailyIncome_ds.Tables
+            //var table = tables[0];
+
+            //using (sqlConn)
+            //{
+            //    using (sqlCommand)
+            //    {
+            //        using (SqlDataReader reader = sqlCommand.ExecuteReader())
+            //        {
+            //            try
+            //            {
+            //                sqlConn.Open();
+            //                sqlAdapter.Fill(dailyIncome_ds, "DailyIncome");
+            //            }
+            //            catch (SqlException sqlEx)
+            //            {
+            //                Console.WriteLine("SQL Exception: {0}", sqlEx.Message);
+            //            }
+            //        }
+            //    }
+            //}
+            sqlConn.Close();
+            return dailyIncome_ds;
+        }
+
         static void DisplaySendDataToSQL(List<Wages> dailyWages)
         {
             DisplayHeader("Add Income To File");
 
             Console.WriteLine("Press any Key to Add Income");
-            //@"Data Source = (DESKTOP-ULLV9GE)\(SQLEXPRESS);Initial Catalog=(TipTracker);Intergrated Security=true;
-            SqlConnection sqlCon = new SqlConnection(@"Data Source = (DESKTOP-ULLV9GE)\(SQLEXPRESS);Initial Catalog=(TipTracker);");
+            //@"Data Source = (DESKTOP-ULLV9GE)\(SQLEXPRESS);Initial Catalog=(TipTrackers);Intergrated Security=true;
+            SqlConnection sqlConn = new SqlConnection(@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True");
+            sqlConn.Open();
             foreach (Wages wage in dailyWages)
             {
-                
-                SqlDataAdapter sqlData = new SqlDataAdapter($"INSERT INTO [DailyIncome](DateOfIncome, HourlyWage, HoursWorked, HourlIncome, TipAmount)VALUES({wage.DateOfIncome}," +
-                    $"{wage.HourlyWage},{wage.HoursWorked},{wage.HourlyIncome},{wage.TipAmount}", sqlCon);
+                // build out SQL command
+
+                var sb = new StringBuilder("INSERT INTO DailyIncome");
+
+                sb.Append(" ([DateOfIncome],[HourlyWage],[HoursWorked],[HourlyIncome],[TipAmount])");
+                sb.Append(" Values (");
+                sb.Append("'").Append(wage.DateOfIncome).Append("',");
+                sb.Append("'").Append(wage.HourlyWage).Append("',");
+                sb.Append("'").Append(wage.HoursWorked).Append("',");
+                sb.Append("'").Append(wage.HourlyIncome).Append("',");
+                sb.Append("'").Append(wage.TipAmount).Append("')");
+
+                string sqlCommandString = sb.ToString();
+                SqlDataAdapter sqlAdapter = new SqlDataAdapter();
+                using (sqlConn)
+                {
+                    try
+                    {
+                        sqlConn.Open();
+                        sqlAdapter.InsertCommand = new SqlCommand(sqlCommandString, sqlConn);
+                        sqlAdapter.InsertCommand.ExecuteNonQuery();
+                    }
+                    catch (SqlException sqlEx)
+                    {
+                        Console.WriteLine("SQL Exception: {0}", sqlEx.Message);
+                        Console.WriteLine(sqlCommandString);
+                    }                    
+                }                
             }
+            sqlConn.Close();
             DisplayContinuePrompt();
         }
 
@@ -37,6 +143,8 @@ namespace TipTracker
             DateTime dateToView;
             bool validResponse = false;
             DisplayHeader("View Total Daily Income");
+
+            List<Wages> selectedWages = dailyWages.Where(w => w.DateOfIncome <= DateTime.Parse("2018-01-04")).ToList();
 
             //
             //Display a List Of Income Dates
@@ -281,11 +389,11 @@ namespace TipTracker
             {
                 DisplayHeader("Main Menu");
 
-                Console.WriteLine("\tA) Add Daily Tips & Wage");
-                Console.WriteLine("\tB) Update Daily Tips & Wage");
-                Console.WriteLine("\tC) Display Income");
-                Console.WriteLine("\tD) Save Earned Incomes to File");
-                Console.WriteLine("\t4) Retrieve Earned Incomes from a File");
+                Console.WriteLine("\t1) Add Daily Tips & Wage");
+                Console.WriteLine("\t2) Update Daily Tips & Wage");
+                Console.WriteLine("\t3) Display Income");
+                Console.WriteLine("\t4) Save Earned Incomes to File");
+                Console.WriteLine("\t5) Retrieve Earned Incomes from a File");
                 Console.WriteLine("\tE) Exit");
 
                 Console.Write("Enter Choice:");
@@ -307,6 +415,7 @@ namespace TipTracker
                         break;
 
                     case "5":
+                        dailyWages = DisplayReadDataFromSQL();
                         break;
 
                     case "E":
