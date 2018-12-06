@@ -18,6 +18,135 @@ namespace TipTracker
             DisplayClosingScreen();
         }
 
+        /// <summary>
+                /// Delete Specific Dates In SQL Database and List
+                /// </summary>
+        static void DisplayDeleteWageFromListAndDB(List<Wages> dailyWages)
+        {
+            bool validResponse;
+            DateTime date1;
+            DateTime date2;
+            DisplayHeader("Delete Income From List and Database");
+
+            Console.Write("Enter the Oldest Date you would like Deleted: ");
+            validResponse = DateTime.TryParse(Console.ReadLine(), out date1);
+            while (!validResponse)
+            {
+                Console.WriteLine();
+                Console.Write("Please enter a valid Date & Time: ");
+                validResponse = DateTime.TryParse(Console.ReadLine(), out date1);
+            }
+            Console.WriteLine();
+            Console.Write("Enter the Most Recent Date you would like Deleted: ");
+            validResponse = DateTime.TryParse(Console.ReadLine(), out date2);
+            if (!validResponse)
+            {
+                date2 = date1;
+            }
+            Console.WriteLine("Press any Key to Delete Date of Income From Database");
+            //@"Data Source = (DESKTOP-ULLV9GE)\(SQLEXPRESS);Initial Catalog=(TipTrackers);Intergrated Security=true;
+            SqlConnection sqlConn = new SqlConnection(@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True");
+            sqlConn.Open();
+            foreach (Wages wage in dailyWages)
+            {
+                // build out SQL command
+
+                var sb = new StringBuilder($"DELETE FROM DailyIncome WHERE");
+                sb.Append($"[DateOfIncome] BETWEEN '{date1}' AND '{date2}'");
+
+                string sqlCommandString = sb.ToString();
+                SqlDataAdapter sqlAdapter = new SqlDataAdapter();
+                sqlAdapter.DeleteCommand = new SqlCommand(sqlCommandString, sqlConn);
+
+                //using (sqlConn)
+                //{
+                //    try
+                //    {
+                //        sqlAdapter.DeleteCommand = new SqlCommand(sqlCommandString, sqlConn);
+                //        sqlAdapter.DeleteCommand.ExecuteNonQuery();
+                //    }
+                //    catch (SqlException sqlEx)
+                //    {
+                //        Console.WriteLine("SQL Exception: {0}", sqlEx.Message);
+                //        Console.WriteLine(sqlCommandString);
+                //    }
+                //}
+                Console.WriteLine();
+                Console.WriteLine("Press any Key to Delete Date of Income From the List");
+                if(wage.DateOfIncome >= date1 && wage.DateOfIncome <= date2)
+                {
+                    dailyWages.Remove(wage);
+                }
+               
+            }
+            sqlConn.Close();
+            DisplayContinuePrompt();
+        }
+
+        /// <summary>
+                /// Update Specific Dates In SQL Database
+                /// </summary>
+        static void DisplayUpdateDataToSQL(List<Wages> dailyWages)
+        {
+            bool validResponse;
+            DateTime  date1;
+            DateTime  date2;
+            DisplayHeader("Update Income To File");
+
+            Console.Write("Enter the Oldest Date you would like Updated: ");
+            validResponse = DateTime.TryParse(Console.ReadLine(), out date1);
+            while (!validResponse)
+            {
+                Console.WriteLine();
+                Console.Write("Please enter a valid Date & Time: ");
+                validResponse = DateTime.TryParse(Console.ReadLine(), out date1);
+            }
+            Console.WriteLine();
+            Console.Write("Enter the Most Recent Date you would like Updated: ");
+            validResponse = DateTime.TryParse(Console.ReadLine(), out date2);
+            if (!validResponse)
+            {
+                date2 = date1;
+            }
+            Console.WriteLine("Press any Key to Update Date of Income in Database");
+            //@"Data Source = (DESKTOP-ULLV9GE)\(SQLEXPRESS);Initial Catalog=(TipTrackers);Intergrated Security=true;
+            SqlConnection sqlConn = new SqlConnection(@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True");
+            sqlConn.Open();
+            foreach (Wages wage in dailyWages)
+            {
+                // build out SQL command
+
+                var sb = new StringBuilder($"UPDATE DailyIncome SET");
+                sb.Append("[HourlyWage] = '").Append(wage.HourlyWage).Append("', ");
+                sb.Append("[HoursWorked] = '").Append(wage.HoursWorked).Append("', ");
+                sb.Append("[HourlyIncome] = '").Append(wage.HourlyIncome).Append("', ");
+                sb.Append("[TipAmount] = '").Append(wage.TipAmount).Append("' ");
+                sb.Append("WHERE ");
+                sb.Append($"[DateOfIncome] BETWEEN '{date1}' AND '{date2}'");
+
+                string sqlCommandString = sb.ToString();
+                SqlDataAdapter sqlAdapter = new SqlDataAdapter();
+                using (sqlConn)
+                {
+                    try
+                    {                        
+                        sqlAdapter.UpdateCommand = new SqlCommand(sqlCommandString, sqlConn);
+                        sqlAdapter.UpdateCommand.ExecuteNonQuery();
+                    }
+                    catch (SqlException sqlEx)
+                    {
+                        Console.WriteLine("SQL Exception: {0}", sqlEx.Message);
+                        Console.WriteLine(sqlCommandString);
+                    }
+                }
+            }
+            sqlConn.Close();
+            DisplayContinuePrompt();
+        }
+
+        /// <summary>
+                /// Pull Dataset and turn into List
+                /// </summary>
         static List<Wages> DisplayReadDataFromSQL()
         {
             List<Wages> dailyWages = new List<Wages>();
@@ -27,40 +156,33 @@ namespace TipTracker
             // load in DataSet and DataTable
             dailyIncome_ds = GetDataSet();
 
-            // add all matching ski runs to an array of DataRow
+            // add all matching ski runs to an array of dailyIncome
             DataRow[] dailyIncomeRows = dailyIncome_ds.Tables["dailyIncome"].Select();
 
-
-
-            // add all DataRow info to the list of ski runs
-
+            // add all DataRow info to the list of dailyIncome
             foreach (DataRow Income in dailyIncomeRows)
-
             {
-
                 dailyWages.Add(new Wages
-
                 {
-
                     DateOfIncome = DateTime.Parse(Income["DateOfIncome"].ToString()),
                     HourlyWage = double.Parse(Income["HourlyWage"].ToString()),
                     HoursWorked = double.Parse(Income["HoursWorked"].ToString()),
                     HourlyIncome = double.Parse(Income["HourlyIncome"].ToString()),
                     TipAmount = double.Parse(Income["TipAmount"].ToString())
-
                 });
             }
             DisplayContinuePrompt();
-            return dailyWages;
-            
-            
+            return dailyWages; 
         }
 
+        /// <summary>
+                /// Turn Database into a Data set
+                /// and passes back to List dailyWages
+                /// </summary>
         static DataSet GetDataSet()
         {
             DataSet dailyIncome_ds = new DataSet();
-             DisplayHeader("Read Income From File");
-            
+             DisplayHeader("Read Income From File");            
             
             SqlConnection sqlConn = new SqlConnection(@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True");
             string sqlCommandString = $"SELECT * FROM DailyIncome";
@@ -95,20 +217,24 @@ namespace TipTracker
             return dailyIncome_ds;
         }
 
+        /// <summary>
+                /// Send Complete List To Database
+                /// </summary>
         static void DisplaySendDataToSQL(List<Wages> dailyWages)
         {
-            DisplayHeader("Add Income To File");
+            DisplayHeader("Add New Income To Database");
 
-            Console.WriteLine("Press any Key to Add Income");
-            //@"Data Source = (DESKTOP-ULLV9GE)\(SQLEXPRESS);Initial Catalog=(TipTrackers);Intergrated Security=true;
+            Console.WriteLine("Press any Key to Add New Income");
+            Console.ReadKey();
+            //@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True"
+            // Open Connection to DB
             SqlConnection sqlConn = new SqlConnection(@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True");
             sqlConn.Open();
             foreach (Wages wage in dailyWages)
             {
                 // build out SQL command
-
+                // to Fill Database
                 var sb = new StringBuilder("INSERT INTO DailyIncome");
-
                 sb.Append(" ([DateOfIncome],[HourlyWage],[HoursWorked],[HourlyIncome],[TipAmount])");
                 sb.Append(" Values (");
                 sb.Append("'").Append(wage.DateOfIncome).Append("',");
@@ -119,11 +245,14 @@ namespace TipTracker
 
                 string sqlCommandString = sb.ToString();
                 SqlDataAdapter sqlAdapter = new SqlDataAdapter();
+
+                //
+                // works with a single Row but kicks unhandled exception when more then 1
+                //
                 using (sqlConn)
                 {
                     try
                     {
-                        sqlConn.Open();
                         sqlAdapter.InsertCommand = new SqlCommand(sqlCommandString, sqlConn);
                         sqlAdapter.InsertCommand.ExecuteNonQuery();
                     }
@@ -131,21 +260,21 @@ namespace TipTracker
                     {
                         Console.WriteLine("SQL Exception: {0}", sqlEx.Message);
                         Console.WriteLine(sqlCommandString);
-                    }                    
-                }                
+                    }
+                }
             }
             sqlConn.Close();
             DisplayContinuePrompt();
         }
 
+        /// <summary>
+                /// display single dailyWage Info
+                /// </summary>
         static void DisplayDailyIncomeInfo(List<Wages> dailyWages)
         {
             DateTime dateToView;
             bool validResponse = false;
             DisplayHeader("View Total Daily Income");
-
-            List<Wages> selectedWages = dailyWages.Where(w => w.DateOfIncome <= DateTime.Parse("2018-01-04")).ToList();
-
             //
             //Display a List Of Income Dates
             //
@@ -165,7 +294,6 @@ namespace TipTracker
                 Console.Write("Please enter a valid Date & Time: ");
                 validResponse = DateTime.TryParse(Console.ReadLine(), out dateToView);
             }
-
             //
             // get Date from list
             //
@@ -174,25 +302,27 @@ namespace TipTracker
             bool dateFound = false;
             DisplayHeader($"Tips & Daily Wages Earned for {dateToView}");
             Console.WriteLine("Type of Income".PadRight(25) + "Amount".PadLeft(10));
-            Console.WriteLine("-----------------".PadRight(25) + "--------".PadLeft(10));
+            Console.WriteLine("-------------------------".PadRight(25) + "----------".PadLeft(10));
+            //
+            // Display Income Incfo
+            //
             foreach (Wages wage in dailyWages)
             {
                 if (wage.DateOfIncome == dateToView)
                 {
-                    Console.WriteLine("Hours Worked:".PadRight(25) + wage.HoursWorked.ToString().PadLeft(10));
-                    Console.WriteLine("Hourly Wage:".PadRight(25) + wage.HourlyWage.ToString("C2").PadLeft(10));
-                    Console.WriteLine("------------".PadLeft(35));
-                    Console.WriteLine("Hourly Wage Earned".PadRight(25) + wage.HourlyIncome.ToString("C2").PadLeft(10));
-                    Console.WriteLine("Tips Earned:".PadRight(25) + wage.TipAmount.ToString("C2").PadLeft(10));
+                    Console.WriteLine("| Hours Worked:".PadRight(25) + wage.HoursWorked.ToString().PadLeft(10) +"|");
+                    Console.WriteLine("| Hourly Wage:".PadRight(25) + wage.HourlyWage.ToString("C2").PadLeft(10) + "|");
+                    Console.WriteLine("------------".PadLeft(35) + "|");
+                    Console.WriteLine("| Hourly Wage Earned".PadRight(25) + wage.HourlyIncome.ToString("C2").PadLeft(10) + "|");
+                    Console.WriteLine("| Tips Earned:".PadRight(25) + wage.TipAmount.ToString("C2").PadLeft(10) + "|");
                     totalIncome = wage.HourlyIncome + wage.TipAmount;
-                    Console.WriteLine("------------".PadLeft(35));
-                    Console.WriteLine("Total Wages:".PadRight(25) + totalIncome.ToString("C2").PadLeft(10));
-                   
+                    Console.WriteLine("------------".PadLeft(35) + "|");
+                    Console.WriteLine("| Total Wages:".PadRight(25) + totalIncome.ToString("C2").PadLeft(10) + "|");
+                    Console.WriteLine("-------------------------".PadRight(25) + "----------".PadLeft(10));
                     dateFound = true;
                     break;
                 }
             }
-
             //
             // Date not found
             //
@@ -200,16 +330,17 @@ namespace TipTracker
             {
                 Console.WriteLine("\t\tUnable to find Date");
             }
-
             DisplayContinuePrompt();
         }
 
-                static void DisplayUpdateTotalDailyIncome(List<Wages> dailyWages)
+        /// <summary>
+                /// Updating a dailyIncome
+                /// </summary>
+        static void DisplayUpdateTotalDailyIncome(List<Wages> dailyWages)
         {
             DateTime dateToChange;
             bool validResponse = false;
             DisplayHeader("Update Total Daily Income");
-
             //
             //Display a List Of Income Dates
             //
@@ -229,7 +360,6 @@ namespace TipTracker
                 Console.Write("Please enter a valid Date & Time: ");
                 validResponse = DateTime.TryParse(Console.ReadLine(), out dateToChange);
             }
-
             //
             // get Date from list
             //
@@ -238,25 +368,30 @@ namespace TipTracker
             double totalIncome = 0;
             DisplayHeader($"Tips & Daily Wages Earned for {dateToChange}");
             Console.WriteLine("Type of Income".PadRight(25) + "Amount".PadLeft(10));
-            Console.WriteLine("-----------------".PadRight(25) + "--------".PadLeft(10));
+            Console.WriteLine("-------------------------".PadRight(25) + "----------".PadLeft(10));
             foreach (Wages wage in dailyWages)
             {
                 if (wage.DateOfIncome == dateToChange)
-                {                    
-                    Console.WriteLine("Hours Worked:".PadRight(25) + wage.HoursWorked.ToString().PadLeft(10));
-                    Console.WriteLine("Hourly Wage:".PadRight(25) + wage.HourlyWage.ToString("C2").PadLeft(10));
-                    Console.WriteLine("------------".PadLeft(35));
-                    Console.WriteLine("Hourly Wage Earned".PadRight(25) + wage.HourlyIncome.ToString("C2").PadLeft(10));
-                    Console.WriteLine("Tips Earned:".PadRight(25) + wage.TipAmount.ToString("C2").PadLeft(10));
-                    totalIncome = wage.TipAmount + wage.HourlyIncome;
-                    Console.WriteLine("------------".PadLeft(35));
-                    Console.WriteLine("Total Wages:".PadRight(25) + totalIncome.ToString("C2").PadLeft(10));
+                {
+                    //
+                    // Display Income Info To BE Changed
+                    //
+                    Console.WriteLine("| Hours Worked:".PadRight(25) + wage.HoursWorked.ToString().PadLeft(10) + "|");
+                    Console.WriteLine("| Hourly Wage:".PadRight(25) + wage.HourlyWage.ToString("C2").PadLeft(10) + "|");
+                    Console.WriteLine("------------".PadLeft(35) + "|");
+                    Console.WriteLine("| Hourly Wage Earned".PadRight(25) + wage.HourlyIncome.ToString("C2").PadLeft(10) + "|");
+                    Console.WriteLine("| Tips Earned:".PadRight(25) + wage.TipAmount.ToString("C2").PadLeft(10) + "|");
+                    totalIncome = wage.HourlyIncome + wage.TipAmount;
+                    Console.WriteLine("------------".PadLeft(35) + "|");
+                    Console.WriteLine("| Total Wages:".PadRight(25) + totalIncome.ToString("C2").PadLeft(10) + "|");
+                    Console.WriteLine("-------------------------".PadRight(25) + "----------".PadLeft(10));
                     Console.WriteLine();
                     Console.WriteLine("Press any Key to Change Values");
 
                     //
                     // Update Income info
-                    //
+                    //Enter Correct Date
+                    // WIth Validation
                     Console.WriteLine("Enter the Correct Date the Wages were Earned (YYYY-MM-DD): ");
                     validResponse = DateTime.TryParse(Console.ReadLine(), out DateTime date);
                     while (!validResponse)
@@ -266,8 +401,9 @@ namespace TipTracker
                         validResponse = DateTime.TryParse(Console.ReadLine(), out date);
                     }
                     wage.DateOfIncome = date;
-
-
+                    //
+                    // Update Tips Earned
+                    // With Validation
                     Console.Write("Enter the Correct Tips Earned: ");
                     validResponse = double.TryParse(Console.ReadLine(), out double tips);
                     while (!validResponse)
@@ -277,7 +413,9 @@ namespace TipTracker
                         validResponse = double.TryParse(Console.ReadLine(), out tips);
                     }
                     wage.TipAmount = tips;
-
+                    //
+                    // Enter Correct Hours Worked
+                    // With Validation
                     Console.Write("Enter your Correct Hours Worked: ");
                     validResponse = double.TryParse(Console.ReadLine(), out double hoursWorked);
                     while (!validResponse)
@@ -287,7 +425,9 @@ namespace TipTracker
                         validResponse = double.TryParse(Console.ReadLine(), out hoursWorked);
                     }
                     wage.HoursWorked = hoursWorked;
-
+                    //
+                    // Enter Correct Hourly Wage
+                    // WIth Validation
                     Console.Write("Enter your Correct Hourly Wage: ");
                     validResponse = double.TryParse(Console.ReadLine(), out double wagePerHour);
                     while (!validResponse)
@@ -297,14 +437,15 @@ namespace TipTracker
                         validResponse = double.TryParse(Console.ReadLine(), out wagePerHour);
                     }
                     wage.HourlyWage = wagePerHour;
-
+                    //
+                    // Total Hourly Income
+                    //
                     wage.HourlyIncome = wagePerHour * hoursWorked;
 
                     dateFound = true;
                     break;
                 }
             }
-
             //
             // Date not found
             //
@@ -312,10 +453,12 @@ namespace TipTracker
             {
                 Console.WriteLine("\t\tUnable to find Date");
             }
-
             DisplayContinuePrompt();
         }
 
+        /// <summary>
+                /// Building a List dailyWages
+                /// </summary>
         static void DisplayGetTotalDailyIncome(List<Wages> dailyWages)
         {
             //
@@ -327,7 +470,8 @@ namespace TipTracker
 
             //
             //Assign Wage Properties
-
+            //Date of income
+            // With Validation
             Console.WriteLine("Enter the Date the Wages were Earned (YYYY-MM-DD): ");
             validResponse = DateTime.TryParse(Console.ReadLine(), out DateTime date);
             while (!validResponse)
@@ -336,35 +480,40 @@ namespace TipTracker
                 Console.Write("Please enter a valid Date: ");
                 validResponse = DateTime.TryParse(Console.ReadLine(), out date);
             }
-            newWage.DateOfIncome = date;
-            
-
+            newWage.DateOfIncome = date;            
+            //
+            // Tips Earned
+            // With Validation
             Console.Write("Enter your Tips Earned: ");
             validResponse = double.TryParse(Console.ReadLine(), out double tips);
             while (!validResponse)
             {
                 Console.WriteLine();
-                Console.Write("Please Enter a correct amount!");
+                Console.Write("Please Enter a correct amount: ");
                 validResponse = double.TryParse(Console.ReadLine(), out tips);
             }
             newWage.TipAmount = tips;
-
+            //
+            // Eneter Hours Worked
+            // With Validation
             Console.Write("Enter your Hours Worked: ");
             validResponse = double.TryParse(Console.ReadLine(), out double hoursWorked);
             while (!validResponse)
             {
                 Console.WriteLine();
-                Console.Write("Please Enter a correct amount!");
+                Console.Write("Please Enter a correct amount: ");
                 validResponse = double.TryParse(Console.ReadLine(), out hoursWorked);
             }
             newWage.HoursWorked = hoursWorked;
-
+            //
+            // Enter Hourly Wage
+            // With Validation
             Console.Write("Enter your Hourly Wage: ");
             validResponse = double.TryParse(Console.ReadLine(), out double wagePerHour);
             while (!validResponse)
             {
                 Console.WriteLine();
-                Console.Write("Please Enter a correct amount!");
+                Console.Write("Please Enter a correct amount: ");
                 validResponse = double.TryParse(Console.ReadLine(), out wagePerHour);
             }
             newWage.HourlyWage = wagePerHour;
@@ -379,6 +528,9 @@ namespace TipTracker
             DisplayContinuePrompt();
         }
 
+        /// <summary>
+                /// Main Menu
+                /// </summary>
         static void DisplayMenu()
         {
             List<Wages> dailyWages = new List<Wages>();
@@ -388,15 +540,18 @@ namespace TipTracker
             while (!exiting)
             {
                 DisplayHeader("Main Menu");
+                Console.Write("-------------------------".PadRight(25)); Console.WriteLine("---------------".PadLeft(15));
+                Console.WriteLine("| 1) Add Daily Tips & Wage to List            |");
+                Console.WriteLine("| 2) Update Daily Tips & Wage in List         |"); 
+                Console.WriteLine("| 3) Display A Daily Income From List         |"); 
+                Console.WriteLine("| 4) Save Earned Incomes to File              |"); 
+                Console.WriteLine("| 5) Retrieve Earned Incomes from a File      |"); 
+                Console.WriteLine("| 6) Update Earned Incomes to File            |"); 
+                Console.WriteLine("| 7) Delete Earned Incomes From File and List |"); 
+                Console.WriteLine("| E) Exit                                     |");
+                Console.Write("-------------------------".PadRight(25)); Console.WriteLine("---------------".PadLeft(15));
 
-                Console.WriteLine("\t1) Add Daily Tips & Wage");
-                Console.WriteLine("\t2) Update Daily Tips & Wage");
-                Console.WriteLine("\t3) Display Income");
-                Console.WriteLine("\t4) Save Earned Incomes to File");
-                Console.WriteLine("\t5) Retrieve Earned Incomes from a File");
-                Console.WriteLine("\tE) Exit");
-
-                Console.Write("Enter Choice:");
+                Console.Write("Enter Choice: ");
                 menuChoice = Console.ReadLine();
 
                 switch (menuChoice)
@@ -413,18 +568,22 @@ namespace TipTracker
                     case "4":
                         DisplaySendDataToSQL(dailyWages);
                         break;
-
                     case "5":
                         dailyWages = DisplayReadDataFromSQL();
                         break;
-
+                    case "6":
+                        DisplayUpdateDataToSQL(dailyWages);
+                        break;
+                    case "7":
+                        DisplayDeleteWageFromListAndDB(dailyWages);
+                        break;
                     case "E":
                     case "e":
                         exiting = true;
                         break;
-
                     default:
                         Console.WriteLine("Invalid choice please choose again.");
+                        Console.WriteLine("-----------------------------------");
                         break;
                 }
             }
@@ -479,6 +638,7 @@ namespace TipTracker
             Console.Clear();
             Console.WriteLine();
             Console.WriteLine("\t\t" + headerTitle);
+            Console.WriteLine("\t-----------------------------------");
             Console.WriteLine();
         }
     }
