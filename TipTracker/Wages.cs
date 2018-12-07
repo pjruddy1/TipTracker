@@ -22,9 +22,7 @@ namespace TipTracker
         private double _hoursWorked;
         private double _hourlyWage;
         private double _hourlyIncome;
-
-
-
+        private double _dailyTotalIncome;
         #endregion
 
         #region Properties
@@ -57,6 +55,12 @@ namespace TipTracker
         {
             get { return _hourlyIncome; }
             set { _hourlyIncome = value; }
+        }
+
+        public double DailyTotalIncome
+        {
+            get { return _dailyTotalIncome; }
+            set { _dailyTotalIncome = value; }
         }
 
         #endregion
