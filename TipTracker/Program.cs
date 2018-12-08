@@ -11,11 +11,389 @@ namespace TipTracker
 {
     class Program
     {
+        public enum TypeOfWage
+        {
+            NONE,
+            TIP,
+            HOURLY,
+            HOURS,
+            TOTAL
+        }
+
+        public enum Condition
+        {
+            NONE,
+            EQUAL,
+            GREATER,
+            LESS
+        }
+
         static void Main(string[] args)
         {
             DisplayOpeningScreen();
             DisplayMenu();
             DisplayClosingScreen();
+        }
+
+        static void DisplaySearchByHours(List<Wages> dailyWages)
+        {
+            bool validResponse = false;
+            bool enumResponse = false;
+            Condition conditionSearch = new Condition();
+            double hours;
+
+            Console.Write("Enter the amount of Hours to search: ");
+            validResponse = double.TryParse(Console.ReadLine(), out hours);
+            while (!validResponse)
+            {
+                Console.WriteLine();
+                Console.Write("Please Enter a correct amount: ");
+                validResponse = double.TryParse(Console.ReadLine(), out hours);
+            }
+
+            while (!enumResponse)
+            {
+                Console.Write("Would you like to Search(GREATER, LESS OR EQUAL) to the Amount:  ");
+                Enum.TryParse<Condition>(Console.ReadLine().ToUpper(), out conditionSearch);
+                switch (conditionSearch)
+                {
+
+                    case Condition.GREATER:
+                    case Condition.LESS:
+                    case Condition.EQUAL:
+                        validResponse = true;
+                        break;
+                    case Condition.NONE:
+                        validResponse = false;
+                        break;
+                }
+            }
+
+            switch (conditionSearch)
+            {
+                case Condition.NONE:
+                    break;
+                case Condition.EQUAL:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.HoursWorked == hours)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                case Condition.GREATER:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.HoursWorked >= hours)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                case Condition.LESS:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.HoursWorked <= hours)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                default:
+                    break;
+            }
+            DisplayContinuePrompt();
+
+        }
+
+        static void DisplaySearchByTotalIncome(List<Wages> dailyWages)
+        {
+            bool validResponse = false;
+            bool enumResponse = false;
+            Condition conditionSearch = new Condition();
+            double totalIncome;
+
+            Console.Write("Enter the amount of Total Daily Income to search: ");
+            validResponse = double.TryParse(Console.ReadLine(), out totalIncome);
+            while (!validResponse)
+            {
+                Console.WriteLine();
+                Console.Write("Please Enter a correct amount: ");
+                validResponse = double.TryParse(Console.ReadLine(), out totalIncome);
+            }
+
+            while (!enumResponse)
+            {
+                Console.Write("Would you like to Search(GREATER, LESS OR EQUAL) to the Amount:  ");
+                Enum.TryParse<Condition>(Console.ReadLine().ToUpper(), out conditionSearch);
+                switch (conditionSearch)
+                {
+
+                    case Condition.GREATER:
+                    case Condition.LESS:
+                    case Condition.EQUAL:
+                        enumResponse = true;
+                        break;
+                    case Condition.NONE:
+                        enumResponse = false;
+                        break;
+                }
+            }
+
+            switch (conditionSearch)
+            {
+                case Condition.NONE:
+                    break;
+                case Condition.EQUAL:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.DailyTotalIncome == totalIncome)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                case Condition.GREATER:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.DailyTotalIncome >= totalIncome)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                case Condition.LESS:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.DailyTotalIncome <= totalIncome)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                default:
+                    break;
+            }
+            DisplayContinuePrompt();
+
+        }
+
+        static void DisplaySearchByHourly(List<Wages> dailyWages)
+        {
+            bool validResponse = false;
+            bool enumResponse = false;
+            Condition conditionSearch = new Condition();
+            double hours;
+
+            Console.Write("Enter the amount of Hours to search: ");
+            validResponse = double.TryParse(Console.ReadLine(), out hours);
+            while (!validResponse)
+            {
+                Console.WriteLine();
+                Console.Write("Please Enter a correct amount: ");
+                validResponse = double.TryParse(Console.ReadLine(), out hours);
+            }
+
+            while (!enumResponse)
+            {
+                Console.Write("Would you like to Search(GREATER, LESS OR EQUAL) to the Amount:  ");
+                Enum.TryParse<Condition>(Console.ReadLine().ToUpper(), out conditionSearch);
+                switch (conditionSearch)
+                {
+
+                    case Condition.GREATER:
+                    case Condition.LESS:
+                    case Condition.EQUAL:
+                        enumResponse = true;
+                        break;
+                    case Condition.NONE:
+                        enumResponse = false;
+                        break;
+                }
+            }
+
+            switch (conditionSearch)
+            {
+                case Condition.NONE:
+                    break;
+                case Condition.EQUAL:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.HoursWorked == hours)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                case Condition.GREATER:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.HoursWorked >= hours)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                case Condition.LESS:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.HoursWorked <= hours)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                default:
+                    break;
+            }
+            DisplayContinuePrompt();
+
+        }
+
+        static void DisplaySearchByTip(List<Wages> dailyWages)
+        {
+            bool validResponse = false;
+            bool enumResponse = false;
+            Condition conditionSearch = new Condition();
+            double tipAmount;
+
+            Console.Write("Enter the amount of Tips to search: ");
+            validResponse = double.TryParse(Console.ReadLine(), out tipAmount);
+            while (!validResponse)
+            {
+                Console.WriteLine();
+                Console.Write("Please Enter a correct amount: ");
+                validResponse = double.TryParse(Console.ReadLine(), out tipAmount);
+            }
+
+            while (!enumResponse)
+            {
+                Console.Write("Would you like to Search(GREATER, LESS OR EQUAL) to the Amount:  ");
+                Enum.TryParse<Condition>(Console.ReadLine().ToUpper(), out conditionSearch);
+                switch (conditionSearch)
+                {
+
+                    case Condition.GREATER:
+                    case Condition.LESS:
+                    case Condition.EQUAL:
+                        enumResponse = true;
+                        break;
+                    case Condition.NONE:
+                        enumResponse = false;
+                        break;
+                }
+            }
+
+            switch (conditionSearch)
+            {
+                case Condition.NONE:                   
+                    break;
+                case Condition.EQUAL:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.TipAmount == tipAmount)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                case Condition.GREATER:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.TipAmount >= tipAmount)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                case Condition.LESS:
+                    Console.WriteLine("--------------------".PadRight(20));
+                    foreach (Wages wage in dailyWages)
+                    {
+                        if (wage.TipAmount <= tipAmount)
+                        {
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                        }
+                    }
+                    Console.WriteLine("--------------------".PadRight(20));
+                    break;
+                default:
+                    break;
+            }
+            DisplayContinuePrompt();
+
+        }
+
+        static void DisplaySearchIncomesNotByDate(List<Wages> dailyWages)
+        {
+            
+            bool validResponse = false;
+            TypeOfWage TypeOfSearch = new TypeOfWage();
+            DisplayHeader("Other Ways to Search For Income Dates");
+            //
+            // Ask user how they would like to search for date
+            //
+            while (!validResponse)
+            {
+                Console.Write("Enter how you would like to search for the date of income(Tip, Hourly, Hours, Total):  ");
+                Enum.TryParse<TypeOfWage>(Console.ReadLine().ToUpper(), out TypeOfSearch);
+                switch (TypeOfSearch)
+                {
+
+                    case TypeOfWage.TIP:
+                    case TypeOfWage.HOURLY:
+                    case TypeOfWage.HOURS:
+                    case TypeOfWage.TOTAL:
+                        validResponse = true;
+                        break;
+                    case TypeOfWage.NONE:
+                        validResponse = false;
+                        break;
+                }
+            }
+
+            switch (TypeOfSearch)
+            {
+                case TypeOfWage.NONE:
+                    break;
+                case TypeOfWage.TIP:
+                    DisplaySearchByTip(dailyWages);
+                    break;
+                case TypeOfWage.HOURLY:
+                    DisplaySearchByHourly(dailyWages);
+                    break;
+                case TypeOfWage.HOURS:
+                    DisplaySearchByHours(dailyWages);
+                    break;
+                case TypeOfWage.TOTAL:
+                    DisplaySearchByTotalIncome(dailyWages);
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>
@@ -180,7 +558,7 @@ namespace TipTracker
                     sb.Append("[HourlyIncome] = '").Append(wage.HourlyIncome).Append("', ");
                     sb.Append("[TipAmount] = '").Append(wage.TipAmount).Append("' ");
                     sb.Append("WHERE ");
-                    sb.Append("[DateOfIncome] = '").Append(wage.DateOfIncome).Append("')");
+                    sb.Append("[DateOfIncome] = '").Append(wage.DateOfIncome).Append("'");
                     SqlConnection sqlConn = new SqlConnection(@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True");
                     sqlConn.Open();
                     string sqlCommandString = sb.ToString();
@@ -653,10 +1031,11 @@ namespace TipTracker
                 Console.WriteLine("| 2) Update Daily Income in Local List        |"); 
                 Console.WriteLine("| 3) Delete Daily Income From Local List      |");
                 Console.WriteLine("| 4) Display A Daily Income From Local List   |");
-                Console.WriteLine("| 5) Save Earned Incomes to Database          |"); 
-                Console.WriteLine("| 6) Retrieve Earned Incomes from a Database  |"); 
-                Console.WriteLine("| 7) Update Earned Incomes to Database        |"); 
-                Console.WriteLine("| 8) Delete Earned Incomes From Database      |"); 
+                Console.WriteLine("| 5) Display A Daily Income From Local List   |");
+                Console.WriteLine("| 6) Save Earned Incomes to Database          |"); 
+                Console.WriteLine("| 7) Retrieve Earned Incomes from a Database  |"); 
+                Console.WriteLine("| 8) Update Earned Incomes to Database        |"); 
+                Console.WriteLine("| 9) Delete Earned Incomes From Database      |"); 
                 Console.WriteLine("| E) Exit                                     |");
                 Console.Write("-------------------------".PadRight(25)); Console.WriteLine("---------------".PadLeft(15));
 
@@ -678,15 +1057,18 @@ namespace TipTracker
                         DisplayDailyIncomeInfo(dailyWages);
                         break;
                     case "5":
-                        DisplaySendDataToSQL(dailyWages);
+                        DisplaySearchIncomesNotByDate(dailyWages);                        
                         break;
                     case "6":
-                        dailyWages = DisplayReadDataFromSQL();
+                        DisplaySendDataToSQL(dailyWages);
                         break;
                     case "7":
-                        DisplayUpdateDataToSQL(dailyWages);
+                        dailyWages = DisplayReadDataFromSQL();
                         break;
                     case "8":
+                        DisplayUpdateDataToSQL(dailyWages);
+                        break;
+                    case "9":
                         DisplayDeleteWageFromDatabase(dailyWages);
                         break;
                     case "E":

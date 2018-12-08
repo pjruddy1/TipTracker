@@ -8,13 +8,7 @@ namespace TipTracker
 {
     class Wages
     {
-        public enum TypeOfWage
-        {
-            NONE,
-            TIP,
-            HOURLY,
-            BONUS
-        }
+        
 
         #region Fields
         private DateTime _dateOfIncome;
