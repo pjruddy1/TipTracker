@@ -11,6 +11,12 @@ namespace TipTracker
 {
     class Program
     {
+        // PJ Ruddy
+        // CIT 110
+        // 12/09/2018
+        // John Velis
+        // Capstone Project
+
         public enum TypeOfWage
         {
             NONE,
@@ -35,14 +41,20 @@ namespace TipTracker
             DisplayClosingScreen();
         }
 
+        /// <summary>
+                /// Search For Dates Of Income 
+        /// By TotalIncome
+                /// </summary>
         static void DisplaySearchByHours(List<Wages> dailyWages)
         {
             bool validResponse = false;
             bool enumResponse = false;
             Condition conditionSearch = new Condition();
             double hours;
-
-            Console.Write("Enter the amount of Hours to search: ");
+            //
+            // Enter and Validate Hours Worked Search
+            //
+            Console.Write("Enter the amount of Hours Worked to search: ");
             validResponse = double.TryParse(Console.ReadLine(), out hours);
             while (!validResponse)
             {
@@ -50,7 +62,9 @@ namespace TipTracker
                 Console.Write("Please Enter a correct amount: ");
                 validResponse = double.TryParse(Console.ReadLine(), out hours);
             }
-
+            //
+            // Enter and validate Search Condition
+            //
             while (!enumResponse)
             {
                 Console.Write("Would you like to Search(GREATER, LESS OR EQUAL) to the Amount:  ");
@@ -64,11 +78,15 @@ namespace TipTracker
                         validResponse = true;
                         break;
                     case Condition.NONE:
+                        Console.WriteLine("Incorrect Response Please Try Again");
                         validResponse = false;
                         break;
                 }
             }
 
+            //
+            // Display Dates and HoursWorked Based On Search
+            //
             switch (conditionSearch)
             {
                 case Condition.NONE:
@@ -79,7 +97,7 @@ namespace TipTracker
                     {
                         if (wage.HoursWorked == hours)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.HoursWorked).ToString().PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -90,7 +108,7 @@ namespace TipTracker
                     {
                         if (wage.HoursWorked >= hours)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.HoursWorked).ToString().PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -101,7 +119,7 @@ namespace TipTracker
                     {
                         if (wage.HoursWorked <= hours)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.HoursWorked).ToString().PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -113,13 +131,19 @@ namespace TipTracker
 
         }
 
+        /// <summary>
+                /// Search For Dates Of Income 
+        /// By TotalIncome
+                /// </summary>
         static void DisplaySearchByTotalIncome(List<Wages> dailyWages)
         {
             bool validResponse = false;
             bool enumResponse = false;
             Condition conditionSearch = new Condition();
             double totalIncome;
-
+            //
+            // Enter and Validate TotalIncome To Search
+            //
             Console.Write("Enter the amount of Total Daily Income to search: ");
             validResponse = double.TryParse(Console.ReadLine(), out totalIncome);
             while (!validResponse)
@@ -128,7 +152,9 @@ namespace TipTracker
                 Console.Write("Please Enter a correct amount: ");
                 validResponse = double.TryParse(Console.ReadLine(), out totalIncome);
             }
-
+            //
+            // Enter and Validate Search Condtion
+            //
             while (!enumResponse)
             {
                 Console.Write("Would you like to Search(GREATER, LESS OR EQUAL) to the Amount:  ");
@@ -142,11 +168,14 @@ namespace TipTracker
                         enumResponse = true;
                         break;
                     case Condition.NONE:
+                        Console.WriteLine("Incorrect Response Please Try Again");
                         enumResponse = false;
                         break;
                 }
             }
-
+            //
+            // Display Date and TotalIncome Based On Search
+            //
             switch (conditionSearch)
             {
                 case Condition.NONE:
@@ -157,7 +186,7 @@ namespace TipTracker
                     {
                         if (wage.DailyTotalIncome == totalIncome)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.DailyTotalIncome).ToString("C2").PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -168,7 +197,7 @@ namespace TipTracker
                     {
                         if (wage.DailyTotalIncome >= totalIncome)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.DailyTotalIncome).ToString("C2").PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -179,7 +208,7 @@ namespace TipTracker
                     {
                         if (wage.DailyTotalIncome <= totalIncome)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.DailyTotalIncome).ToString("C2").PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -191,14 +220,20 @@ namespace TipTracker
 
         }
 
+        /// <summary>
+                /// Search For Dates Of Income 
+        /// By HourlyWage
+                /// </summary>
         static void DisplaySearchByHourly(List<Wages> dailyWages)
         {
             bool validResponse = false;
             bool enumResponse = false;
             Condition conditionSearch = new Condition();
             double hours;
-
-            Console.Write("Enter the amount of Hours to search: ");
+            //
+            // Enter and Validate Hourly Wage To Search
+            //
+            Console.Write("Enter the amount of Hourly Wage to search: ");
             validResponse = double.TryParse(Console.ReadLine(), out hours);
             while (!validResponse)
             {
@@ -206,7 +241,9 @@ namespace TipTracker
                 Console.Write("Please Enter a correct amount: ");
                 validResponse = double.TryParse(Console.ReadLine(), out hours);
             }
-
+            //
+            // Enter and Validat Search Condition
+            //
             while (!enumResponse)
             {
                 Console.Write("Would you like to Search(GREATER, LESS OR EQUAL) to the Amount:  ");
@@ -220,11 +257,14 @@ namespace TipTracker
                         enumResponse = true;
                         break;
                     case Condition.NONE:
+                        Console.WriteLine("Incorrect Response Please Try Again");
                         enumResponse = false;
                         break;
                 }
             }
-
+            //
+            // Display Date and HourlyWage Based On Search
+            //
             switch (conditionSearch)
             {
                 case Condition.NONE:
@@ -233,9 +273,9 @@ namespace TipTracker
                     Console.WriteLine("--------------------".PadRight(20));
                     foreach (Wages wage in dailyWages)
                     {
-                        if (wage.HoursWorked == hours)
+                        if (wage.HourlyWage == hours)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.HourlyWage).ToString().PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -244,9 +284,9 @@ namespace TipTracker
                     Console.WriteLine("--------------------".PadRight(20));
                     foreach (Wages wage in dailyWages)
                     {
-                        if (wage.HoursWorked >= hours)
+                        if (wage.HourlyWage >= hours)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.HourlyWage).ToString().PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -255,9 +295,9 @@ namespace TipTracker
                     Console.WriteLine("--------------------".PadRight(20));
                     foreach (Wages wage in dailyWages)
                     {
-                        if (wage.HoursWorked <= hours)
+                        if (wage.HourlyWage <= hours)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.HourlyWage).ToString().PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -269,13 +309,19 @@ namespace TipTracker
 
         }
 
+        /// <summary>
+                /// Search For Dates Of Income 
+        /// By TipAmount
+                /// </summary>
         static void DisplaySearchByTip(List<Wages> dailyWages)
         {
             bool validResponse = false;
             bool enumResponse = false;
             Condition conditionSearch = new Condition();
             double tipAmount;
-
+            //
+            // Enter and Validate TipAmount To Search
+            //
             Console.Write("Enter the amount of Tips to search: ");
             validResponse = double.TryParse(Console.ReadLine(), out tipAmount);
             while (!validResponse)
@@ -284,7 +330,9 @@ namespace TipTracker
                 Console.Write("Please Enter a correct amount: ");
                 validResponse = double.TryParse(Console.ReadLine(), out tipAmount);
             }
-
+            //
+            // Enter and Validate Conditon To Search
+            //
             while (!enumResponse)
             {
                 Console.Write("Would you like to Search(GREATER, LESS OR EQUAL) to the Amount:  ");
@@ -298,11 +346,14 @@ namespace TipTracker
                         enumResponse = true;
                         break;
                     case Condition.NONE:
+                        Console.WriteLine("Incorrect Response Please Try Again");
                         enumResponse = false;
                         break;
                 }
             }
-
+            //
+            // Display Date and TipAmount Based On Search
+            //
             switch (conditionSearch)
             {
                 case Condition.NONE:                   
@@ -313,7 +364,7 @@ namespace TipTracker
                     {
                         if (wage.TipAmount == tipAmount)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.TipAmount).ToString("C2").PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -324,7 +375,7 @@ namespace TipTracker
                     {
                         if (wage.TipAmount >= tipAmount)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.TipAmount).ToString("C2").PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -335,7 +386,7 @@ namespace TipTracker
                     {
                         if (wage.TipAmount <= tipAmount)
                         {
-                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString().PadRight(20) + "|");
+                            Console.Write("| "); Console.WriteLine((wage.DateOfIncome).ToShortDateString() + ": " + (wage.TipAmount).ToString("C2").PadRight(20) + "|");
                         }
                     }
                     Console.WriteLine("--------------------".PadRight(20));
@@ -347,6 +398,10 @@ namespace TipTracker
 
         }
 
+        /// <summary>
+                /// Search For Dates Of Income 
+                /// By TipAmount, HoursWorked or TotalIncome
+                /// </summary>
         static void DisplaySearchIncomesNotByDate(List<Wages> dailyWages)
         {
             
@@ -478,8 +533,11 @@ namespace TipTracker
             }
             Console.WriteLine("Press any Key to Delete Date of Income From Database");
             Console.ReadKey();
+            //
+            // connection string borrowed from: https://www.youtube.com/watch?v=WJ-CdeTGxp8 / DOT NET MOB
+            //
             //@"Data Source = (DESKTOP-ULLV9GE)\(SQLEXPRESS);Initial Catalog=(TipTrackers);Intergrated Security=true;
-            
+
             foreach (Wages wage in dailyWages)
             {
                 if (wage.DateOfIncome >= date1 || wage.DateOfIncome <= date2)
@@ -491,6 +549,10 @@ namespace TipTracker
                     sb.Append($"[DateOfIncome] BETWEEN '{date1}' AND '{date2}'");
                     SqlConnection sqlConn = new SqlConnection(@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True");
                     sqlConn.Open();
+                    //
+                    // SQL Command Borrowed From https://github.com/NMC-CIT255/Project_SkiRunRater John Velis CIT 255
+                    //
+
                     string sqlCommandString = sb.ToString();
                     SqlDataAdapter sqlAdapter = new SqlDataAdapter();
                     sqlAdapter.DeleteCommand = new SqlCommand(sqlCommandString, sqlConn);
@@ -545,10 +607,18 @@ namespace TipTracker
             
             Console.WriteLine("Press any Key to Update Date of Income in Database");
             Console.ReadKey();
+            //
+            // connection string borrowed from: https://www.youtube.com/watch?v=WJ-CdeTGxp8 / DOT NET MOB
+            //
             //@"Data Source = (DESKTOP-ULLV9GE)\(SQLEXPRESS);Initial Catalog=(TipTrackers);Intergrated Security=true;            
-           
+
             foreach (Wages wage in dailyWages)
             {
+
+                //
+                // SQL Command Borrowed From https://github.com/NMC-CIT255/Project_SkiRunRater John Velis CIT 255
+                //
+
                 // build out SQL command
                 if (wage.DateOfIncome == date1)
                 {
@@ -591,6 +661,9 @@ namespace TipTracker
             List<Wages> dailyWages = new List<Wages>();
             DataSet dailyIncome_ds = new DataSet();
             DataTable dailyIncome_dt = new DataTable();
+            //
+            // Loading Data Set From SQL Borrowed From https://github.com/NMC-CIT255/Project_SkiRunRater John Velis CIT 255
+            //
 
             // load in DataSet and DataTable
             dailyIncome_ds = GetDataSet();
@@ -613,7 +686,7 @@ namespace TipTracker
             DisplayContinuePrompt();
             return dailyWages; 
         }
-
+        
         /// <summary>
                 /// Turn Database into a Data set
                 /// and passes back to List dailyWages
@@ -621,14 +694,19 @@ namespace TipTracker
         static DataSet GetDataSet()
         {
             DataSet dailyIncome_ds = new DataSet();
-             DisplayHeader("Read Income From File");            
-            
+             DisplayHeader("Read Income From File");
+            //
+            // connection string borrowed from: https://www.youtube.com/watch?v=WJ-CdeTGxp8 / DOT NET MOB
+            //
             SqlConnection sqlConn = new SqlConnection(@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True");
             string sqlCommandString = $"SELECT * FROM DailyIncome";
 
             SqlCommand sqlCommand = new SqlCommand(sqlCommandString, sqlConn);
             SqlDataAdapter sqlAdapter = new SqlDataAdapter(sqlCommand);
 
+            //
+            // SQL Command Borrowed From https://github.com/NMC-CIT255/Project_SkiRunRater John Velis CIT 255
+            //
             sqlAdapter.Fill(dailyIncome_ds, "DailyIncome");
 
             //var tables = dailyIncome_ds.Tables
@@ -677,7 +755,7 @@ namespace TipTracker
             //
             // Choose Dates to Delete
             //
-            Console.Write("Enter the Oldest Date you would like Deleted: ");
+            Console.Write("Enter the Oldest Date you would like Inserted: ");
             validResponse = DateTime.TryParse(Console.ReadLine(), out date1);
             while (!validResponse)
             {
@@ -686,7 +764,7 @@ namespace TipTracker
                 validResponse = DateTime.TryParse(Console.ReadLine(), out date1);
             }
             Console.WriteLine();
-            Console.Write("Enter the Most Recent Date you would like Deleted: ");
+            Console.Write("Enter the Most Recent Date you would like Inserted: ");
             validResponse = DateTime.TryParse(Console.ReadLine(), out date2);
             if (!validResponse)
             {
@@ -694,15 +772,22 @@ namespace TipTracker
             }
             Console.WriteLine("Press any Key to Add New Income");
             Console.ReadKey();
+            //
+            // connection string borrowed from: https://www.youtube.com/watch?v=WJ-CdeTGxp8 / DOT NET MOB
+            //
             //@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True"
             // Open Connection to DB
-            
+
             foreach (Wages wage in dailyWages)
             {
                 if (wage.DateOfIncome >= date1 && wage.DateOfIncome <= date2)
                 {
                     // build out SQL command
                     // to Fill Database
+
+                    //
+                    // SQL Command Borrowed From https://github.com/NMC-CIT255/Project_SkiRunRater John Velis CIT 255
+                    //
                     SqlConnection sqlConn = new SqlConnection(@"Data Source=DESKTOP-ULLV9GE\SQLEXPRESS;Initial Catalog=TipTrackers;Integrated Security=True");
                     sqlConn.Open();
                     var sb = new StringBuilder("INSERT INTO DailyIncome");
@@ -776,7 +861,7 @@ namespace TipTracker
             Console.Clear();
             double totalIncome = 0;
             bool dateFound = false;
-            DisplayHeader($"Tips & Daily Wages Earned for {dateToView}");
+            DisplayHeader($"Tips & Daily Wages Earned for {dateToView.ToShortDateString()}");
             Console.WriteLine("Type of Income".PadRight(25) + "Amount".PadLeft(10));
             Console.WriteLine("-------------------------".PadRight(25) + "----------".PadLeft(10));
             //
@@ -1027,16 +1112,16 @@ namespace TipTracker
             {
                 DisplayHeader("Main Menu");
                 Console.Write("-------------------------".PadRight(25)); Console.WriteLine("---------------".PadLeft(15));
-                Console.WriteLine("| 1) Add Daily Income to Local List           |");
-                Console.WriteLine("| 2) Update Daily Income in Local List        |"); 
-                Console.WriteLine("| 3) Delete Daily Income From Local List      |");
-                Console.WriteLine("| 4) Display A Daily Income From Local List   |");
-                Console.WriteLine("| 5) Display A Daily Income From Local List   |");
-                Console.WriteLine("| 6) Save Earned Incomes to Database          |"); 
-                Console.WriteLine("| 7) Retrieve Earned Incomes from a Database  |"); 
-                Console.WriteLine("| 8) Update Earned Incomes to Database        |"); 
-                Console.WriteLine("| 9) Delete Earned Incomes From Database      |"); 
-                Console.WriteLine("| E) Exit                                     |");
+                Console.WriteLine("| 1) Add Daily Income to Local List            |");
+                Console.WriteLine("| 2) Update Daily Income in Local List         |"); 
+                Console.WriteLine("| 3) Delete Daily Income From Local List       |");
+                Console.WriteLine("| 4) Display A Daily Income From Local List    |");
+                Console.WriteLine("| 5) Search For Dates Using(Tip, Hours, Total) |");
+                Console.WriteLine("| 6) Save Earned Incomes to Database           |"); 
+                Console.WriteLine("| 7) Retrieve Earned Incomes from a Database   |"); 
+                Console.WriteLine("| 8) Update Earned Incomes to Database         |"); 
+                Console.WriteLine("| 9) Delete Earned Incomes From Database       |"); 
+                Console.WriteLine("| E) Exit                                      |");
                 Console.Write("-------------------------".PadRight(25)); Console.WriteLine("---------------".PadLeft(15));
 
                 Console.Write("Enter Choice: ");
