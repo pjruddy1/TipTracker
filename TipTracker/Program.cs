@@ -680,7 +680,8 @@ namespace TipTracker
                     HourlyWage = double.Parse(Income["HourlyWage"].ToString()),
                     HoursWorked = double.Parse(Income["HoursWorked"].ToString()),
                     HourlyIncome = double.Parse(Income["HourlyIncome"].ToString()),
-                    TipAmount = double.Parse(Income["TipAmount"].ToString())
+                    TipAmount = double.Parse(Income["TipAmount"].ToString()),
+                    DailyTotalIncome = double.Parse(Income["TotalDailyIncome"].ToString())
                 });
             }
             DisplayContinuePrompt();
